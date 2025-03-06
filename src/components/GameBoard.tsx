@@ -4,18 +4,28 @@ import { drawPlayer, Player } from './Player';
 import { drawEnemy, Enemy } from './Enemy';
 import { drawNPC, NPC } from './NPC';
 
+export interface AreaConfig {
+  id: string;
+  name: string;
+  enemyPositions: { x: number; y: number }[];
+  npcPositions: { x: number; y: number }[];
+  portalPosition: { x: number; y: number } | null;
+}
+
 interface GameBoardProps {
   onEncounter: () => void;
   onDialogue: () => void;
+  onPortal: () => void;
+  area: AreaConfig;
 }
 
-const GameBoard: React.FC<GameBoardProps> = ({ onEncounter, onDialogue }) => {
+const GameBoard: React.FC<GameBoardProps> = ({ onEncounter, onDialogue, onPortal, area }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const gridSize = 40;
   const canvasWidth = 400;
   const canvasHeight = 400;
 
-  // Estado do jogador (centralizado)
+  // Estado do jogador (centralizado inicialmente)
   const initialPlayer: Player = {
     x: Math.floor((canvasWidth / 2) / gridSize) * gridSize,
     y: Math.floor((canvasHeight / 2) / gridSize) * gridSize,
@@ -23,30 +33,21 @@ const GameBoard: React.FC<GameBoardProps> = ({ onEncounter, onDialogue }) => {
   };
   const [player, setPlayer] = useState<Player>(initialPlayer);
 
-  // Estado do inimigo (posição fixa inicial e movimento aleatório)
-  const initialEnemy: Enemy = {
-    x: gridSize * 2,
-    y: gridSize * 2,
-    size: gridSize,
-  };
-  const [enemy, setEnemy] = useState<Enemy>(initialEnemy);
+  // Utiliza a primeira posição do array para inimigo e NPC (se existir)
+  const enemy = area.enemyPositions.length > 0 ? { x: area.enemyPositions[0].x, y: area.enemyPositions[0].y, size: gridSize } : null;
+  const npc = area.npcPositions.length > 0 ? { x: area.npcPositions[0].x, y: area.npcPositions[0].y, size: gridSize } : null;
+  const portal = area.portalPosition;
 
-  // NPC fixo para diálogo (posição distinta)
-  const initialNPC: NPC = {
-    x: gridSize * 5,
-    y: gridSize * 2,
-    size: gridSize,
-  };
-  const [npc] = useState<NPC>(initialNPC);
-
+  // Configura o canvas uma única vez
   useEffect(() => {
     const canvas = canvasRef.current;
     if (canvas) {
       canvas.width = canvasWidth;
       canvas.height = canvasHeight;
     }
-  }, []);
+  }, [canvasWidth, canvasHeight]);
 
+  // Desenha o grid e os elementos do mapa
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -63,24 +64,36 @@ const GameBoard: React.FC<GameBoardProps> = ({ onEncounter, onDialogue }) => {
       }
     }
 
-    // Desenha o inimigo
-    drawEnemy(ctx, enemy);
+    // Desenha o inimigo, se existir
+    if (enemy) {
+      drawEnemy(ctx, enemy as Enemy);
+    }
 
-    // Desenha o NPC
-    drawNPC(ctx, npc);
+    // Desenha o NPC, se existir
+    if (npc) {
+      drawNPC(ctx, npc as NPC);
+    }
+
+    // Desenha o portal, se existir (cor roxa)
+    if (portal) {
+      ctx.fillStyle = 'purple';
+      ctx.fillRect(portal.x, portal.y, gridSize, gridSize);
+    }
 
     // Desenha o jogador
     drawPlayer(ctx, player);
 
-    // Verifica colisão com o inimigo (para combate)
-    if (player.x === enemy.x && player.y === enemy.y) {
+    // Verifica colisões
+    if (enemy && player.x === enemy.x && player.y === enemy.y) {
       onEncounter();
     }
-    // Verifica colisão com o NPC (para diálogo)
-    if (player.x === npc.x && player.y === npc.y) {
+    if (npc && player.x === npc.x && player.y === npc.y) {
       onDialogue();
     }
-  }, [player, enemy, npc, onEncounter, onDialogue]);
+    if (portal && player.x === portal.x && player.y === portal.y) {
+      onPortal();
+    }
+  }, [player, enemy, npc, portal, onEncounter, onDialogue, onPortal, canvasWidth, canvasHeight]);
 
   // Movimento do jogador via teclado
   useEffect(() => {
@@ -102,29 +115,7 @@ const GameBoard: React.FC<GameBoardProps> = ({ onEncounter, onDialogue }) => {
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
-
-  // Movimento aleatório do inimigo a cada 2 segundos
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setEnemy((prev) => {
-        const directions = [
-          { dx: gridSize, dy: 0 },
-          { dx: -gridSize, dy: 0 },
-          { dx: 0, dy: gridSize },
-          { dx: 0, dy: -gridSize },
-          { dx: 0, dy: 0 },
-        ];
-        const random = directions[Math.floor(Math.random() * directions.length)];
-        let newX = prev.x + random.dx;
-        let newY = prev.y + random.dy;
-        newX = Math.max(0, Math.min(canvasWidth - gridSize, newX));
-        newY = Math.max(0, Math.min(canvasHeight - gridSize, newY));
-        return { ...prev, x: newX, y: newY };
-      });
-    }, 2000);
-    return () => clearInterval(interval);
-  }, [gridSize, canvasWidth, canvasHeight]);
+  }, [canvasWidth, canvasHeight, gridSize]);
 
   return <canvas ref={canvasRef} style={{ border: '1px solid black' }} />;
 };
