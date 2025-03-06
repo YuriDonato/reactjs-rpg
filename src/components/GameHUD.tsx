@@ -1,6 +1,12 @@
+// src/components/GameHUD.tsx
 import React from 'react';
 
-const GameHUD: React.FC = () => {
+interface GameHUDProps {
+  onInventory: () => void;
+  onOpenQuestLog: () => void;
+}
+
+const GameHUD: React.FC<GameHUDProps> = ({ onInventory, onOpenQuestLog }) => {
   return (
     <div
       style={{
@@ -10,10 +16,8 @@ const GameHUD: React.FC = () => {
         gap: '10px',
       }}
     >
-      <h3>anda na seta tá kothas</h3>
-      {/* <button>Ataque</button>
-      <button>Defesa</button>
-      <button>Inventário</button> */}
+      <button onClick={onInventory}>Inventário</button>
+      <button onClick={onOpenQuestLog}>Quests</button>
     </div>
   );
 };
