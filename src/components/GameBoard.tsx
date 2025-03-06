@@ -1,8 +1,9 @@
 // src/components/GameBoard.tsx
-import React, { useRef, useEffect, useState } from 'react';
-import { drawPlayer, Player } from './Player';
-import { drawEnemy, Enemy } from './Enemy';
-import { drawNPC, NPC } from './NPC';
+import React, { useRef, useEffect, useState } from "react";
+import { drawPlayer, Player } from "./Player";
+import { drawEnemy, Enemy } from "./Enemy";
+import { drawNPC, NPC } from "./NPC";
+import { GameBoardContainer } from "../styles/GameBoard";
 
 export interface AreaConfig {
   id: string;
@@ -19,7 +20,12 @@ interface GameBoardProps {
   area: AreaConfig;
 }
 
-const GameBoard: React.FC<GameBoardProps> = ({ onEncounter, onDialogue, onPortal, area }) => {
+const GameBoard: React.FC<GameBoardProps> = ({
+  onEncounter,
+  onDialogue,
+  onPortal,
+  area,
+}) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const gridSize = 40;
   const canvasWidth = 400;
@@ -27,15 +33,25 @@ const GameBoard: React.FC<GameBoardProps> = ({ onEncounter, onDialogue, onPortal
 
   // Estado do jogador (centralizado inicialmente)
   const initialPlayer: Player = {
-    x: Math.floor((canvasWidth / 2) / gridSize) * gridSize,
-    y: Math.floor((canvasHeight / 2) / gridSize) * gridSize,
+    x: Math.floor(canvasWidth / 2 / gridSize) * gridSize,
+    y: Math.floor(canvasHeight / 2 / gridSize) * gridSize,
     size: gridSize,
   };
   const [player, setPlayer] = useState<Player>(initialPlayer);
 
   // Utiliza a primeira posição do array para inimigo e NPC (se existir)
-  const enemy = area.enemyPositions.length > 0 ? { x: area.enemyPositions[0].x, y: area.enemyPositions[0].y, size: gridSize } : null;
-  const npc = area.npcPositions.length > 0 ? { x: area.npcPositions[0].x, y: area.npcPositions[0].y, size: gridSize } : null;
+  const enemy =
+    area.enemyPositions.length > 0
+      ? {
+          x: area.enemyPositions[0].x,
+          y: area.enemyPositions[0].y,
+          size: gridSize,
+        }
+      : null;
+  const npc =
+    area.npcPositions.length > 0
+      ? { x: area.npcPositions[0].x, y: area.npcPositions[0].y, size: gridSize }
+      : null;
   const portal = area.portalPosition;
 
   // Configura o canvas uma única vez
@@ -51,7 +67,7 @@ const GameBoard: React.FC<GameBoardProps> = ({ onEncounter, onDialogue, onPortal
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
     ctx.clearRect(0, 0, canvasWidth, canvasHeight);
@@ -59,7 +75,7 @@ const GameBoard: React.FC<GameBoardProps> = ({ onEncounter, onDialogue, onPortal
     // Desenha o grid
     for (let x = 0; x < canvasWidth; x += gridSize) {
       for (let y = 0; y < canvasHeight; y += gridSize) {
-        ctx.strokeStyle = 'gray';
+        ctx.strokeStyle = "gray";
         ctx.strokeRect(x, y, gridSize, gridSize);
       }
     }
@@ -76,7 +92,7 @@ const GameBoard: React.FC<GameBoardProps> = ({ onEncounter, onDialogue, onPortal
 
     // Desenha o portal, se existir (cor roxa)
     if (portal) {
-      ctx.fillStyle = 'purple';
+      ctx.fillStyle = "purple";
       ctx.fillRect(portal.x, portal.y, gridSize, gridSize);
     }
 
@@ -93,7 +109,17 @@ const GameBoard: React.FC<GameBoardProps> = ({ onEncounter, onDialogue, onPortal
     if (portal && player.x === portal.x && player.y === portal.y) {
       onPortal();
     }
-  }, [player, enemy, npc, portal, onEncounter, onDialogue, onPortal, canvasWidth, canvasHeight]);
+  }, [
+    player,
+    enemy,
+    npc,
+    portal,
+    onEncounter,
+    onDialogue,
+    onPortal,
+    canvasWidth,
+    canvasHeight,
+  ]);
 
   // Movimento do jogador via teclado
   useEffect(() => {
@@ -101,23 +127,27 @@ const GameBoard: React.FC<GameBoardProps> = ({ onEncounter, onDialogue, onPortal
       setPlayer((prev) => {
         let newX = prev.x;
         let newY = prev.y;
-        if (e.key === 'ArrowLeft') {
+        if (e.key === "ArrowLeft") {
           newX = Math.max(0, prev.x - gridSize);
-        } else if (e.key === 'ArrowRight') {
+        } else if (e.key === "ArrowRight") {
           newX = Math.min(canvasWidth - gridSize, prev.x + gridSize);
-        } else if (e.key === 'ArrowUp') {
+        } else if (e.key === "ArrowUp") {
           newY = Math.max(0, prev.y - gridSize);
-        } else if (e.key === 'ArrowDown') {
+        } else if (e.key === "ArrowDown") {
           newY = Math.min(canvasHeight - gridSize, prev.y + gridSize);
         }
         return { ...prev, x: newX, y: newY };
       });
     };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, [canvasWidth, canvasHeight, gridSize]);
 
-  return <canvas ref={canvasRef} style={{ border: '1px solid black' }} />;
+  return (
+    <GameBoardContainer>
+      <canvas ref={canvasRef} style={{ border: "1px solid black" }} />
+    </GameBoardContainer>
+  );
 };
 
 export default GameBoard;
