@@ -5,14 +5,24 @@ interface GameHUDProps {
   onInventory: () => void;
   onOpenQuestLog: () => void;
   onOpenShop: () => void;
+  onSaveGame: () => void;
+  onLoadGame: () => void;
 }
 
-const GameHUD: React.FC<GameHUDProps> = ({ onInventory, onOpenQuestLog, onOpenShop }) => {
+const GameHUD: React.FC<GameHUDProps> = ({
+  onInventory,
+  onOpenQuestLog,
+  onOpenShop,
+  onSaveGame,
+  onLoadGame,
+}) => {
   return (
     <div style={{ display: 'flex', justifyContent: 'center', marginTop: '10px', gap: '10px' }}>
       <button onClick={onInventory}>Inventário</button>
       <button onClick={onOpenQuestLog}>Quests</button>
       <button onClick={onOpenShop}>Loja</button>
+      <button onClick={onSaveGame}>Salvar</button>
+      <button onClick={onLoadGame}>Carregar</button>
     </div>
   );
 };

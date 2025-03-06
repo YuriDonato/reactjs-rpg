@@ -40,7 +40,7 @@ const App: React.FC = () => {
     setInventory((prev) =>
       prev.map((invItem) =>
         invItem.id === item.id && invItem.quantity > 0
-          ? { ...invItem, quantity: invItem.quantity - 1 }
+          ? { ...invItem, quantity: invItem.quantity + 0 - 1 }
           : invItem
       ).filter((invItem) => invItem.quantity > 0)
     );
@@ -72,6 +72,38 @@ const App: React.FC = () => {
 
   const exitDialogue = () => setScreen('map');
 
+  // Função para salvar o progresso do jogo no localStorage
+  const handleSaveGame = () => {
+    const gameState = {
+      playerHP,
+      playerXP,
+      playerLevel,
+      playerGold,
+      quests,
+      inventory,
+    };
+    localStorage.setItem('gameState', JSON.stringify(gameState));
+    alert('Progresso salvo!');
+  };
+
+  // Função para carregar o progresso do jogo do localStorage
+  const handleLoadGame = () => {
+    const savedState = localStorage.getItem('gameState');
+    if (savedState) {
+      const { playerHP, playerXP, playerLevel, playerGold, quests, inventory } = JSON.parse(savedState);
+      setPlayerHP(playerHP);
+      setPlayerXP(playerXP);
+      setPlayerLevel(playerLevel);
+      setPlayerGold(playerGold);
+      setQuests(quests);
+      setInventory(inventory);
+      alert('Progresso carregado!');
+    } else {
+      alert('Nenhum progresso salvo encontrado.');
+    }
+  };
+
+  // Função para tratar compra de itens na loja
   const handleBuyItem = (item: ShopItem) => {
     if (playerGold >= item.price) {
       setPlayerGold((prevGold) => prevGold - item.price);
@@ -96,7 +128,13 @@ const App: React.FC = () => {
       {screen === 'map' && (
         <>
           <GameBoard onEncounter={handleEncounter} onDialogue={handleDialogue} />
-          <GameHUD onInventory={openInventory} onOpenQuestLog={openQuestLog} onOpenShop={openShop} />
+          <GameHUD
+            onInventory={openInventory}
+            onOpenQuestLog={openQuestLog}
+            onOpenShop={openShop}
+            onSaveGame={handleSaveGame}
+            onLoadGame={handleLoadGame}
+          />
           <div style={{ textAlign: 'center', marginTop: '10px' }}>
             <p>HP Jogador: {playerHP}</p>
             <p>Nível: {playerLevel} | XP: {playerXP}</p>
@@ -117,7 +155,12 @@ const App: React.FC = () => {
         <QuestLog quests={quests} onClose={() => setScreen('map')} />
       )}
       {screen === 'shop' && (
-        <ShopScreen onClose={() => setScreen('map')} onBuy={handleBuyItem} shopItems={shopItems} playerGold={playerGold} />
+        <ShopScreen
+          onClose={() => setScreen('map')}
+          onBuy={handleBuyItem}
+          shopItems={shopItems}
+          playerGold={playerGold}
+        />
       )}
     </div>
   );
