@@ -1,6 +1,7 @@
 // src/components/GameHUD.tsx
-import React from 'react';
-import { GameHUDContainer, StyledHUDButton } from '../styles/GameHud';
+import React from "react";
+import { StyledButton } from "../styles/StyledButtons";
+import { StyledHUD } from "../styles/StyledHUD";
 
 interface GameHUDProps {
   onInventory: () => void;
@@ -22,15 +23,15 @@ const GameHUD: React.FC<GameHUDProps> = ({
   onOpenEquipment,
 }) => {
   return (
-    <GameHUDContainer style={{ display: 'flex', justifyContent: 'center', marginTop: '10px', gap: '10px' }}>
-      <StyledHUDButton onClick={onInventory}>Inventário</StyledHUDButton>
-      <StyledHUDButton onClick={onOpenQuestLog}>Quests</StyledHUDButton>
-      <StyledHUDButton onClick={onOpenShop}>Loja</StyledHUDButton>
-      <StyledHUDButton onClick={onSaveGame}>Salvar</StyledHUDButton>
-      <StyledHUDButton onClick={onLoadGame}>Carregar</StyledHUDButton>
-      <StyledHUDButton onClick={onOpenAreaSelection}>Mudar Área</StyledHUDButton>
-      <StyledHUDButton onClick={onOpenEquipment}>Equipamentos</StyledHUDButton>
-    </GameHUDContainer>
+    <StyledHUD>
+      <StyledButton onClick={onInventory}>Inventário</StyledButton>
+      <StyledButton onClick={onOpenQuestLog}>Quests</StyledButton>
+      <StyledButton onClick={onOpenShop}>Loja</StyledButton>
+      <StyledButton onClick={onSaveGame}>Salvar</StyledButton>
+      <StyledButton onClick={onLoadGame}>Carregar</StyledButton>
+      <StyledButton onClick={onOpenAreaSelection}>Mudar Área</StyledButton>
+      <StyledButton onClick={onOpenEquipment}>Equipamentos</StyledButton>
+    </StyledHUD>
   );
 };
 
