@@ -22,6 +22,7 @@ interface GameBoardProps {
 
 const GameBoard: React.FC<GameBoardProps> = ({
   onEncounter,
+  onBossEncounter,
   onDialogue,
   onPortal,
   area,
@@ -109,13 +110,13 @@ const GameBoard: React.FC<GameBoardProps> = ({
 
     enemies.forEach((enemy) => {
       if (player.x === enemy.x && player.y === enemy.y) {
-        // onEncounter(enemy);
+        onEncounter(enemy);
       }
     });
 
     bosses.forEach((boss) => {
       if (player.x === boss.x && player.y === boss.y) {
-        // onBossEncounter(boss);
+        onBossEncounter(boss);
       }
     });
 
