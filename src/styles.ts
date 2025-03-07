@@ -4,7 +4,7 @@ export const GlobalCss = createGlobalStyle`
   body {
     margin: 0;
     padding: 0;
-    background-color: #021408 /*1e1e2f */
+    background-color: #021408;
     color: #ffffff;
     font-family: 'Inter', sans-serif !important;
     overflow-x: hidden;

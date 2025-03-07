@@ -17,6 +17,8 @@ import { InventoryItem, ShopItem, EquipmentItem } from "./components/types";
 import { Quest } from "./components/QuestLog";
 import { Enemy } from "./components/Enemy";
 import BossCombatScreen from "./components/BossCombatScreen";
+import { PlayerStats, PlayerStatsContainer } from "./styles/GameStats";
+import { ContainerApp } from "./styles/ContainerApp";
 
 const App: React.FC = () => {
     // Telas possíveis: 'map', 'combat', 'inventory', 'dialogue', 'quest', 'shop', 'areaSelection', 'dynamicDialogue', 'upgrade', 'equipment'
@@ -278,9 +280,18 @@ const App: React.FC = () => {
     };
 
     return (
-        <div>
+        <ContainerApp>
             {screen === "map" && (
-                <>
+                <div
+                    style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        height: "100%",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        gap: "20px"
+                    }}
+                >
                     <GameBoard
                         onEncounter={(enemy) => {
                             // Aqui você pode definir qual inimigo foi encontrado
@@ -292,26 +303,44 @@ const App: React.FC = () => {
                         onPortal={handlePortal}
                         area={currentArea}
                     />
-                    <GameHUD
-                        onInventory={openInventory}
-                        onOpenQuestLog={openQuestLog}
-                        onOpenShop={openShop}
-                        onSaveGame={handleSaveGame}
-                        onLoadGame={handleLoadGame}
-                        onOpenAreaSelection={openAreaSelection}
-                        onOpenEquipment={openEquipment}
-                    />
-                    <div style={{ textAlign: "center", marginTop: "10px" }}>
-                        <p>Área: {currentArea.name}</p>
-                        <p>
-                            HP Jogador: {playerHP} / {playerMaxHP}
-                        </p>
-                        <p>
-                            Nível: {playerLevel} | XP: {playerXP}
-                        </p>
-                        <p>Ouro: {playerGold}</p>
+                    <div
+                        style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            height: "100%",
+                            justifyContent: "center",
+                            alignItems: "center",
+                        }}
+                    >
+                        <GameHUD
+                            onInventory={openInventory}
+                            onOpenQuestLog={openQuestLog}
+                            onOpenShop={openShop}
+                            onSaveGame={handleSaveGame}
+                            onLoadGame={handleLoadGame}
+                            onOpenAreaSelection={openAreaSelection}
+                            onOpenEquipment={openEquipment}
+                        />
                     </div>
-                </>
+                    <PlayerStatsContainer
+                        style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            height: "100%",
+                            justifyContent: "center",
+                            alignItems: "center",
+                        }}
+                    >
+                        <PlayerStats>Área: {currentArea.name}</PlayerStats>
+                        <PlayerStats>
+                            HP Jogador: {playerHP} / {playerMaxHP}
+                        </PlayerStats>
+                        <PlayerStats>
+                            Nível: {playerLevel} | XP: {playerXP}
+                        </PlayerStats>
+                        <PlayerStats>Ouro: {playerGold}</PlayerStats>
+                    </PlayerStatsContainer>
+                </div>
             )}
             {screen === "combat" && (
                 <CombatScreen
@@ -385,7 +414,7 @@ const App: React.FC = () => {
                     defenseBonus={currentEquipment.armor?.bonus || 0}
                 />
             )}
-        </div>
+        </ContainerApp>
     );
 };
 
