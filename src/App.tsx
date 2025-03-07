@@ -20,6 +20,7 @@ import BossCombatScreen from "./components/BossCombatScreen";
 import { PlayerStats } from "./styles/StyledHUD";
 import { ContainerApp } from "./styles/ContainerApp";
 import { StyledHUD } from "./styles/StyledHUD";
+import { Alert, AlertContainer } from "./styles/Alert";
 
 const App: React.FC = () => {
   // Telas possíveis: 'map', 'combat', 'inventory', 'dialogue', 'quest', 'shop', 'areaSelection', 'dynamicDialogue', 'upgrade', 'equipment'
@@ -70,6 +71,10 @@ const App: React.FC = () => {
   const [playerAttack, setPlayerAttack] = useState(20);
   const [playerCooldownReduction, setPlayerCooldownReduction] = useState(0);
 
+  // Salvar e carregar progresso
+  const [saveMessage, setSaveMessage] = useState("");
+  const [loadMessage, setLoadMessage] = useState("");
+
   // Estado para equipamentos
   const [currentEquipment, setCurrentEquipment] = useState<{
     weapon: EquipmentItem | null;
@@ -77,14 +82,38 @@ const App: React.FC = () => {
   }>({ weapon: null, armor: null });
   // Itens de equipamento disponíveis (exemplo fixo)
   const [availableEquipment] = useState<EquipmentItem[]>([
-    { id: 1, name: "Espada de Bronze", type: "weapon", bonus: 5 },
-    { id: 2, name: "Escudo de Madeira", type: "armor", bonus: 3 },
+    {
+      id: 1,
+      name: "Espada de Bronze",
+      type: "weapon",
+      bonus: 5,
+      description: "Uma espada de bronze",
+    },
+    {
+      id: 2,
+      name: "Escudo de Madeira",
+      type: "armor",
+      bonus: 3,
+      description: "Um escudo de madeira",
+    },
   ]);
 
   // Itens disponíveis na loja
   const shopItems: ShopItem[] = [
-    { id: 1, name: "Poção", price: 30, effect: 20 },
-    { id: 2, name: "Elixir", price: 70, effect: 50 },
+    {
+      id: 1,
+      name: "Poção",
+      price: 30,
+      effect: 20,
+      description: "Restaura 20 HP",
+    },
+    {
+      id: 2,
+      name: "Elixir",
+      price: 70,
+      effect: 50,
+      description: "Isso é apenas um teste",
+    },
   ];
 
   // (Funções de combate, diálogo, salvar/carregar, etc. permanecem inalteradas)
@@ -191,7 +220,8 @@ const App: React.FC = () => {
       currentEquipment,
     };
     localStorage.setItem("gameState", JSON.stringify(gameState));
-    alert("Progresso salvo!");
+    setSaveMessage("Progresso salvo com sucesso!");
+    setTimeout(() => setSaveMessage(""), 3000);
   };
 
   const handleLoadGame = () => {
@@ -215,9 +245,11 @@ const App: React.FC = () => {
       setInventory(inventory);
       setCurrentArea(currentArea);
       setCurrentEquipment(currentEquipment);
-      alert("Progresso carregado!");
+      setLoadMessage("Progresso carregado!");
+      setTimeout(() => setLoadMessage(""), 3000);
     } else {
-      alert("Nenhum progresso salvo encontrado.");
+      setLoadMessage("Nenhum progresso salvo encontrado.");
+      setTimeout(() => setLoadMessage(""), 3000);
     }
   };
 
@@ -241,6 +273,7 @@ const App: React.FC = () => {
               name: item.name,
               quantity: 1,
               effect: item.effect,
+              description: item.description,
             },
           ];
         }
@@ -397,6 +430,12 @@ const App: React.FC = () => {
           attackBonus={playerAttack + (currentEquipment.weapon?.bonus || 0)}
           defenseBonus={currentEquipment.armor?.bonus || 0}
         />
+      )}
+      {(saveMessage || loadMessage) && (
+        <AlertContainer>
+          {saveMessage && <Alert>{saveMessage}</Alert>}
+          {loadMessage && <Alert>{loadMessage}</Alert>}
+        </AlertContainer>
       )}
     </ContainerApp>
   );

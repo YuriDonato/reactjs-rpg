@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { StyledButton } from "../styles/StyledButtons";
 import { PlayerStats, StyledHUD } from "../styles/StyledHUD";
+import { StyledH1 } from "../styles/StyledWord";
 
 interface CombatScreenProps {
   playerHP: number;
@@ -90,7 +91,7 @@ const CombatScreen: React.FC<CombatScreenProps> = ({
             alignItems: "center",
           }}
         >
-          <h1 style={{ textAlign: "center" }}>Você venceu!</h1>
+          <StyledH1 style={{ textAlign: "center" }}>Você venceu!</StyledH1>
           <PlayerStats
             style={{ marginBottom: "8px", width: "100%", padding: "8px" }}
           >
@@ -115,7 +116,9 @@ const CombatScreen: React.FC<CombatScreenProps> = ({
             alignItems: "center",
           }}
         >
-          <h1 style={{ textAlign: "center" }}>Você foi derrotado...</h1>
+          <StyledH1 style={{ textAlign: "center" }}>
+            Você foi derrotado...
+          </StyledH1>
           <StyledButton onClick={onExitCombat}>Voltar ao Mapa</StyledButton>
         </StyledHUD>
       </div>
@@ -132,50 +135,26 @@ const CombatScreen: React.FC<CombatScreenProps> = ({
           alignItems: "center",
         }}
       >
-        <h1 style={{ textAlign: "center" }}>Combate</h1>
-        <PlayerStats
-          style={{ marginBottom: "8px", width: "100%", padding: "8px" }}
-        >
-          {message}
+        <StyledH1 style={{ textAlign: "center" }}>Combate</StyledH1>
+        <PlayerStats>{message}</PlayerStats>
+        <PlayerStats>HP Jogador: {playerHP}</PlayerStats>
+        <PlayerStats>HP Inimigo: {enemyHP}</PlayerStats>
+        <PlayerStats>
+          Cooldown Habilidade Especial: {specialCooldown}
         </PlayerStats>
-        <PlayerStats
-          style={{
-            marginBottom: "8px",
-            width: "100%",
-            padding: "8px",
-            alignItems: "center",
-            gap: "4px",
-          }}
+        <StyledButton onClick={handlePlayerAttack} disabled={!playerTurn}>
+          Atacar
+        </StyledButton>
+        <StyledButton
+          onClick={handleSpecialAttack}
+          disabled={!playerTurn || specialCooldown > 0}
         >
-          <PlayerStats>HP Jogador: {playerHP}</PlayerStats>
-          <PlayerStats>HP Inimigo: {enemyHP}</PlayerStats>
-          <PlayerStats>
-            Cooldown Habilidade Especial: {specialCooldown}
-          </PlayerStats>
-        </PlayerStats>
-        <PlayerStats
-          style={{
-            marginBottom: "8px",
-            width: "100%",
-            padding: "8px",
-            alignItems: "center",
-            gap: "4px",
-          }}
-        >
-          <StyledButton onClick={handlePlayerAttack} disabled={!playerTurn}>
-            Atacar
-          </StyledButton>
-          <StyledButton
-            onClick={handleSpecialAttack}
-            disabled={!playerTurn || specialCooldown > 0}
-          >
-            Habilidade Especial
-          </StyledButton>
-          <StyledButton onClick={handleDefend} disabled={!playerTurn}>
-            Defender
-          </StyledButton>
-          <StyledButton onClick={onExitCombat}>Fugir</StyledButton>
-        </PlayerStats>
+          Habilidade Especial
+        </StyledButton>
+        <StyledButton onClick={handleDefend} disabled={!playerTurn}>
+          Defender
+        </StyledButton>
+        <StyledButton onClick={onExitCombat}>Fugir</StyledButton>
       </StyledHUD>
     </div>
   );
