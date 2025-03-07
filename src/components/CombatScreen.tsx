@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
+import { StyledButton } from "../styles/StyledButtons";
+import { PlayerStats, StyledHUD } from "../styles/StyledHUD";
 
 interface CombatScreenProps {
   playerHP: number;
@@ -18,7 +20,7 @@ const CombatScreen: React.FC<CombatScreenProps> = ({
   defenseBonus,
 }) => {
   const [enemyHP, setEnemyHP] = useState(100);
-  const [message, setMessage] = useState('Sua vez de agir!');
+  const [message, setMessage] = useState("Sua vez de agir!");
   const [playerTurn, setPlayerTurn] = useState(true);
   const [specialCooldown, setSpecialCooldown] = useState<number>(0);
 
@@ -41,7 +43,9 @@ const CombatScreen: React.FC<CombatScreenProps> = ({
     const effectiveDamage = baseDamage + attackBonus;
     const newEnemyHP = Math.max(enemyHP - effectiveDamage, 0);
     setEnemyHP(newEnemyHP);
-    setMessage(`Você usou Habilidade Especial e causou ${effectiveDamage} de dano!`);
+    setMessage(
+      `Você usou Habilidade Especial e causou ${effectiveDamage} de dano!`
+    );
     setPlayerTurn(false);
     setSpecialCooldown(3);
     if (newEnemyHP > 0) {
@@ -51,7 +55,7 @@ const CombatScreen: React.FC<CombatScreenProps> = ({
 
   const handleDefend = () => {
     if (!playerTurn) return;
-    setMessage('Você se defendeu e reduziu o dano do inimigo!');
+    setMessage("Você se defendeu e reduziu o dano do inimigo!");
     setPlayerTurn(false);
     setTimeout(() => {
       const baseDamage = Math.floor(Math.random() * 10) + 1;
@@ -59,7 +63,7 @@ const CombatScreen: React.FC<CombatScreenProps> = ({
       const newHP = Math.max(playerHP - effectiveDamage, 0);
       onUpdateHP(newHP);
       setMessage(`O inimigo atacou e causou ${effectiveDamage} de dano!`);
-      setSpecialCooldown(prev => (prev > 0 ? prev - 1 : 0));
+      setSpecialCooldown((prev) => (prev > 0 ? prev - 1 : 0));
       setPlayerTurn(true);
     }, 1000);
   };
@@ -70,55 +74,109 @@ const CombatScreen: React.FC<CombatScreenProps> = ({
     const newHP = Math.max(playerHP - effectiveDamage, 0);
     onUpdateHP(newHP);
     setMessage(`O inimigo atacou e causou ${effectiveDamage} de dano!`);
-    setSpecialCooldown(prev => (prev > 0 ? prev - 1 : 0));
+    setSpecialCooldown((prev) => (prev > 0 ? prev - 1 : 0));
     setPlayerTurn(true);
   };
 
   if (enemyHP === 0) {
     const xpGained = Math.floor(Math.random() * 30) + 20;
     return (
-      <div style={{ padding: '20px' }}>
-        <h1>Você venceu!</h1>
-        <p>Ganhou {xpGained} XP!</p>
-        <button onClick={() => onVictory(xpGained, playerHP)}>Continuar</button>
+      <div>
+        <StyledHUD
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            width: "100%",
+            alignItems: "center",
+          }}
+        >
+          <h1 style={{ textAlign: "center" }}>Você venceu!</h1>
+          <PlayerStats
+            style={{ marginBottom: "8px", width: "100%", padding: "8px" }}
+          >
+            Ganhou {xpGained} XP!
+          </PlayerStats>
+          <StyledButton onClick={() => onVictory(xpGained, playerHP)}>
+            Continuar
+          </StyledButton>
+        </StyledHUD>
       </div>
     );
   }
 
   if (playerHP === 0) {
     return (
-      <div style={{ padding: '20px' }}>
-        <h1>Você foi derrotado...</h1>
-        <button onClick={onExitCombat}>Voltar ao Mapa</button>
+      <div style={{ padding: "20px" }}>
+        <StyledHUD
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            width: "100%",
+            alignItems: "center",
+          }}
+        >
+          <h1 style={{ textAlign: "center" }}>Você foi derrotado...</h1>
+          <StyledButton onClick={onExitCombat}>Voltar ao Mapa</StyledButton>
+        </StyledHUD>
       </div>
     );
   }
 
   return (
-    <div style={{ padding: '20px' }}>
-      <h1>Combate</h1>
-      <p>{message}</p>
-      <div style={{ marginBottom: '10px' }}>
-        <p>HP Jogador: {playerHP}</p>
-        <p>HP Inimigo: {enemyHP}</p>
-        <p>Cooldown Habilidade Especial: {specialCooldown}</p>
-      </div>
-      <button onClick={handlePlayerAttack} disabled={!playerTurn}>
-        Atacar
-      </button>
-      <button
-        onClick={handleSpecialAttack}
-        disabled={!playerTurn || specialCooldown > 0}
-        style={{ marginLeft: '10px' }}
+    <div>
+      <StyledHUD
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          width: "100%",
+          alignItems: "center",
+        }}
       >
-        Habilidade Especial
-      </button>
-      <button onClick={handleDefend} disabled={!playerTurn} style={{ marginLeft: '10px' }}>
-        Defender
-      </button>
-      <button onClick={onExitCombat} style={{ marginLeft: '10px' }}>
-        Fugir
-      </button>
+        <h1 style={{ textAlign: "center" }}>Combate</h1>
+        <PlayerStats
+          style={{ marginBottom: "8px", width: "100%", padding: "8px" }}
+        >
+          {message}
+        </PlayerStats>
+        <PlayerStats
+          style={{
+            marginBottom: "8px",
+            width: "100%",
+            padding: "8px",
+            alignItems: "center",
+            gap: "4px",
+          }}
+        >
+          <PlayerStats>HP Jogador: {playerHP}</PlayerStats>
+          <PlayerStats>HP Inimigo: {enemyHP}</PlayerStats>
+          <PlayerStats>
+            Cooldown Habilidade Especial: {specialCooldown}
+          </PlayerStats>
+        </PlayerStats>
+        <PlayerStats
+          style={{
+            marginBottom: "8px",
+            width: "100%",
+            padding: "8px",
+            alignItems: "center",
+            gap: "4px",
+          }}
+        >
+          <StyledButton onClick={handlePlayerAttack} disabled={!playerTurn}>
+            Atacar
+          </StyledButton>
+          <StyledButton
+            onClick={handleSpecialAttack}
+            disabled={!playerTurn || specialCooldown > 0}
+          >
+            Habilidade Especial
+          </StyledButton>
+          <StyledButton onClick={handleDefend} disabled={!playerTurn}>
+            Defender
+          </StyledButton>
+          <StyledButton onClick={onExitCombat}>Fugir</StyledButton>
+        </PlayerStats>
+      </StyledHUD>
     </div>
   );
 };

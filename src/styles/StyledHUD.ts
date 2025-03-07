@@ -5,7 +5,7 @@ export const StyledHUD = styled.div`
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
-  gap: 8px;
+  gap: 4px;
   background-color: rgb(110, 73, 0);
   height: 100%;
   width: 100%;
