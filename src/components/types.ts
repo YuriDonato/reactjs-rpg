@@ -3,7 +3,7 @@ export interface ShopItem {
     id: number;
     name: string;
     price: number;
-    effect: number; // Efeito pode ser, por exemplo, a quantidade de HP restaurada
+    effect: number;
   }
   
   export interface InventoryItem {
@@ -11,5 +11,13 @@ export interface ShopItem {
     name: string;
     quantity: number;
     effect: number;
+  }
+  
+  // Nova interface para equipamentos
+  export interface EquipmentItem {
+    id: number;
+    name: string;
+    type: 'weapon' | 'armor';
+    bonus: number; // Por exemplo: bonus de dano para arma ou bonus de defesa para armadura
   }
   

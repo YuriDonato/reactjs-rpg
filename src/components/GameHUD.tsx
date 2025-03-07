@@ -8,6 +8,7 @@ interface GameHUDProps {
   onSaveGame: () => void;
   onLoadGame: () => void;
   onOpenAreaSelection: () => void;
+  onOpenEquipment: () => void;
 }
 
 const GameHUD: React.FC<GameHUDProps> = ({
@@ -17,6 +18,7 @@ const GameHUD: React.FC<GameHUDProps> = ({
   onSaveGame,
   onLoadGame,
   onOpenAreaSelection,
+  onOpenEquipment,
 }) => {
   return (
     <div style={{ display: 'flex', justifyContent: 'center', marginTop: '10px', gap: '10px' }}>
@@ -26,6 +28,7 @@ const GameHUD: React.FC<GameHUDProps> = ({
       <button onClick={onSaveGame}>Salvar</button>
       <button onClick={onLoadGame}>Carregar</button>
       <button onClick={onOpenAreaSelection}>Mudar Área</button>
+      <button onClick={onOpenEquipment}>Equipamentos</button>
     </div>
   );
 };
