@@ -75,6 +75,8 @@ const App: React.FC = () => {
   const [saveMessage, setSaveMessage] = useState("");
   const [loadMessage, setLoadMessage] = useState("");
 
+  // Mudar de Mapa
+
   // Estado para equipamentos
   const [currentEquipment, setCurrentEquipment] = useState<{
     weapon: EquipmentItem | null;
